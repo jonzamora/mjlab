@@ -55,10 +55,10 @@
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="FAQ &amp; Troubleshooting" href="faq.html" />
+    <link rel="prev" title="Research" href="research.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Feb 26, 2026"/>
+    <meta name="docbuild:last-update" content="Feb 27, 2026"/>
   </head>
   
   
@@ -239,6 +239,7 @@
 <li class="toctree-l1"><a class="reference internal" href="motivation.html">Why mjlab?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="research.html">Research</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Changelog</a></li>
 </ul>
 
@@ -555,6 +556,13 @@ name pattern during <code class="docutils literal notranslate"><span class="pre"
 instead of the default checker texture.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DebugVisualizer</span></code> now supports ellipsoid visualization via
 <code class="docutils literal notranslate"><span class="pre">add_ellipsoid</span></code>.</p></li>
+<li><p>Viewer single-step mode: press RIGHT arrow (native) or click “Step”
+(Viser) to advance exactly one physics step while paused.</p></li>
+<li><p>Viewer error recovery: exceptions during stepping now pause the viewer
+and log the traceback instead of crashing the process.</p></li>
+<li><p>Native viewer runs forward kinematics while paused, keeping
+perturbation visuals accurate.</p></li>
+<li><p>Viewer speed multipliers use clean power-of-2 fractions (1/32x to 1x).</p></li>
 <li><p>Visualizers display the realtime factor alongside FPS.</p></li>
 <li><p>Terrain is now a proper <code class="docutils literal notranslate"><span class="pre">Entity</span></code> subclass (<code class="docutils literal notranslate"><span class="pre">TerrainEntity</span></code>). This
 allows domain randomization functions to target terrain parameters
@@ -569,6 +577,9 @@ file uploads (<code class="docutils literal notranslate"><span class="pre">.pt</
 <section id="changed">
 <h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
 <ul class="simple">
+<li><p>Self collision and illegal contact sensors now use <code class="docutils literal notranslate"><span class="pre">history_length</span></code> to
+catch contacts across decimation substeps. Reward and termination functions
+read <code class="docutils literal notranslate"><span class="pre">force_history</span></code> with a configurable <code class="docutils literal notranslate"><span class="pre">force_threshold</span></code>.</p></li>
 <li><p>Replaced the single <code class="docutils literal notranslate"><span class="pre">scale</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">DifferentialIKActionCfg</span></code> with
 separate <code class="docutils literal notranslate"><span class="pre">delta_pos_scale</span></code> and <code class="docutils literal notranslate"><span class="pre">delta_ori_scale</span></code> for independent scaling
 of position and orientation components.</p></li>
@@ -711,12 +722,12 @@ Contribution by <a class="reference external" href="https://github.com/oxkitsune
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="faq.html"
+       href="research.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">FAQ &amp; Troubleshooting</p>
+        <p class="prev-next-title">Research</p>
       </div>
     </a>
 </div>
@@ -787,7 +798,7 @@ By The mjlab Developers
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Feb 26, 2026.
+  Last updated on Feb 27, 2026.
   <br/>
 </p>
   </div>

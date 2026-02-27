@@ -55,11 +55,11 @@
     <link rel="icon" href="../_static/favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Changelog" href="changelog.html" />
+    <link rel="next" title="Research" href="research.html" />
     <link rel="prev" title="Migrating from Isaac Lab" href="migration_isaac_lab.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Feb 26, 2026"/>
+    <meta name="docbuild:last-update" content="Feb 27, 2026"/>
   </head>
   
   
@@ -240,6 +240,7 @@
 <li class="toctree-l1"><a class="reference internal" href="motivation.html">Why mjlab?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="research.html">Research</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 
@@ -467,6 +468,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-debugging">Training &amp; Debugging</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#my-training-crashes-with-nan-errors">My training crashes with NaN errors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#my-contact-sensor-misses-collisions-when-using-decimation">My contact sensor misses collisions when using decimation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-i-need-to-call-sim-forward">When do I need to call <code class="docutils literal notranslate"><span class="pre">sim.forward()</span></code>?</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-aren-t-my-training-runs-reproducible-even-with-a-fixed-seed">Why aren’t my training runs reproducible even with a fixed seed?</a></li>
 </ul>
@@ -631,6 +633,36 @@ termination.</p>
 <a class="reference external" href="https://github.com/google-deepmind/mujoco_warp/issues">MuJoCo Warp team</a>.</p></li>
 </ul>
 <p>Reporting well-isolated issues helps improve the framework for everyone.</p>
+</section>
+<section id="my-contact-sensor-misses-collisions-when-using-decimation">
+<h3>My contact sensor misses collisions when using decimation<a class="headerlink" href="#my-contact-sensor-misses-collisions-when-using-decimation" title="Link to this heading">#</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">decimation</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> the physics runs multiple substeps per policy
+step. A brief contact (e.g. a self collision or an illegal ground touch)
+can appear and disappear within the substep loop, so by the time the
+sensor is read, <code class="docutils literal notranslate"><span class="pre">found</span></code> is zero and the event is invisible to
+rewards and terminations.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">history_length</span></code> on the <code class="docutils literal notranslate"><span class="pre">ContactSensorCfg</span></code> equal to your
+decimation value. The sensor then stores force, torque, and distance
+for the last <em>N</em> substeps. Your reward or termination function can
+inspect the history to detect contacts that would otherwise be missed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ContactSensorCfg</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;self_collision&quot;</span><span class="p">,</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;found&quot;</span><span class="p">,</span> <span class="s2">&quot;force&quot;</span><span class="p">),</span>
+    <span class="n">history_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># matches decimation=4</span>
+<span class="p">)</span>
+
+<span class="c1"># In the reward/termination function:</span>
+<span class="n">force_mag</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">sensor</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">force_history</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [B, N, H]</span>
+<span class="n">had_contact</span> <span class="o">=</span> <span class="p">(</span><span class="n">force_mag</span> <span class="o">&gt;</span> <span class="mf">10.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>    <span class="c1"># [B]</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="sensors/index.html#contact-sensor-history"><span class="std std-ref">History (decimation safe contacts)</span></a> for full details.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Feet ground sensors with <code class="docutils literal notranslate"><span class="pre">track_air_time=True</span></code> already accumulate
+contact state across substeps, so they do not need history.</p>
+</div>
 </section>
 <section id="when-do-i-need-to-call-sim-forward">
 <span id="faq-sim-forward"></span><h3>When do I need to call <code class="docutils literal notranslate"><span class="pre">sim.forward()</span></code>?<a class="headerlink" href="#when-do-i-need-to-call-sim-forward" title="Link to this heading">#</a></h3>
@@ -943,11 +975,11 @@ being worked on.</p>
       </div>
     </a>
     <a class="right-next"
-       href="changelog.html"
+       href="research.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Changelog</p>
+        <p class="prev-next-title">Research</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -981,6 +1013,7 @@ being worked on.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-debugging">Training &amp; Debugging</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#my-training-crashes-with-nan-errors">My training crashes with NaN errors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#my-contact-sensor-misses-collisions-when-using-decimation">My contact sensor misses collisions when using decimation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-do-i-need-to-call-sim-forward">When do I need to call <code class="docutils literal notranslate"><span class="pre">sim.forward()</span></code>?</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-aren-t-my-training-runs-reproducible-even-with-a-fixed-seed">Why aren’t my training runs reproducible even with a fixed seed?</a></li>
 </ul>
@@ -1043,7 +1076,7 @@ By The mjlab Developers
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Feb 26, 2026.
+  Last updated on Feb 27, 2026.
   <br/>
 </p>
   </div>

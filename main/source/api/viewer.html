@@ -59,7 +59,7 @@
     <link rel="prev" title="mjlab.rl" href="rl.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Feb 26, 2026"/>
+    <meta name="docbuild:last-update" content="Feb 27, 2026"/>
   </head>
   
   
@@ -240,6 +240,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../motivation.html">Why mjlab?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../migration_isaac_lab.html">Migrating from Isaac Lab</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq.html">FAQ &amp; Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../research.html">Research</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
 </ul>
 
@@ -483,6 +484,9 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseViewer.__init__()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.request_action"><code class="docutils literal notranslate"><span class="pre">BaseViewer.request_action()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.tick"><code class="docutils literal notranslate"><span class="pre">BaseViewer.tick()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.target_realtime"><code class="docutils literal notranslate"><span class="pre">BaseViewer.target_realtime</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.actual_realtime"><code class="docutils literal notranslate"><span class="pre">BaseViewer.actual_realtime</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.get_status"><code class="docutils literal notranslate"><span class="pre">BaseViewer.get_status()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -697,6 +701,24 @@ sim-time budget (accumulated from wall time * speed multiplier), while
 rendering always happens at the configured <code class="docutils literal notranslate"><span class="pre">frame_rate</span></code>. This keeps
 the display smooth even at slow playback speeds.</p>
 <p>Returns True when a render frame was produced, False otherwise.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mjlab.viewer.BaseViewer.target_realtime">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_realtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#mjlab.viewer.BaseViewer.target_realtime" title="Link to this definition">#</a></dt>
+<dd><p>Target realtime factor based on the current speed multiplier.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mjlab.viewer.BaseViewer.actual_realtime">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">actual_realtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#mjlab.viewer.BaseViewer.actual_realtime" title="Link to this definition">#</a></dt>
+<dd><p>Actual realtime factor based on smoothed steps per second.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mjlab.viewer.BaseViewer.get_status">
+<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ViewerStatus</span></span></span><a class="reference internal" href="../../_modules/mjlab/viewer/base.html#BaseViewer.get_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mjlab.viewer.BaseViewer.get_status" title="Link to this definition">#</a></dt>
+<dd><p>Build a read-only status snapshot for viewer UIs.</p>
 </dd></dl>
 
 </dd></dl>
@@ -930,6 +952,9 @@ the display smooth even at slow playback speeds.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.__init__"><code class="docutils literal notranslate"><span class="pre">BaseViewer.__init__()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.request_action"><code class="docutils literal notranslate"><span class="pre">BaseViewer.request_action()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.tick"><code class="docutils literal notranslate"><span class="pre">BaseViewer.tick()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.target_realtime"><code class="docutils literal notranslate"><span class="pre">BaseViewer.target_realtime</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.actual_realtime"><code class="docutils literal notranslate"><span class="pre">BaseViewer.actual_realtime</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mjlab.viewer.BaseViewer.get_status"><code class="docutils literal notranslate"><span class="pre">BaseViewer.get_status()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1015,7 +1040,7 @@ By The mjlab Developers
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Feb 26, 2026.
+  Last updated on Feb 27, 2026.
   <br/>
 </p>
   </div>
