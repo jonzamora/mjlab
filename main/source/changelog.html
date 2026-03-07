@@ -58,7 +58,7 @@
     <link rel="prev" title="Research" href="research.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="Mar 02, 2026"/>
+    <meta name="docbuild:last-update" content="Mar 07, 2026"/>
   </head>
   
   
@@ -216,6 +216,7 @@
 <li class="toctree-l1"><a class="reference internal" href="training/distributed_training.html">Distributed Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="training/cloud.html">Cloud Training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging/nan_guard.html">NaN Guard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging/export_scene.html">Export Scene</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="nav bd-sidenav">
@@ -453,7 +454,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upcoming-version-not-yet-released">Upcoming version (not yet released)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-1-2-0-march-6-2026">Version 1.2.0 (March 6, 2026)</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
@@ -485,8 +486,8 @@ document.write(`
                   
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading">#</a></h1>
-<section id="upcoming-version-not-yet-released">
-<h2>Upcoming version (not yet released)<a class="headerlink" href="#upcoming-version-not-yet-released" title="Link to this heading">#</a></h2>
+<section id="version-1-2-0-march-6-2026">
+<h2>Version 1.2.0 (March 6, 2026)<a class="headerlink" href="#version-1-2-0-march-6-2026" title="Link to this heading">#</a></h2>
 <div class="attention admonition">
 <p class="admonition-title">Breaking API changes</p>
 <ul class="simple">
@@ -495,11 +496,22 @@ from the new <code class="docutils literal notranslate"><span class="pre">dr</sp
 <li><p><code class="docutils literal notranslate"><span class="pre">EventTermCfg</span></code> no longer accepts <code class="docutils literal notranslate"><span class="pre">domain_randomization</span></code>. The
 <code class="docutils literal notranslate"><span class="pre">&#64;requires_model_fields</span></code> decorator on each <code class="docutils literal notranslate"><span class="pre">dr</span></code> function takes care
 of field expansion automatically.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Scene.to_zip()</span></code> is deprecated. Use <code class="docutils literal notranslate"><span class="pre">Scene.write(path,</span> <span class="pre">zip=True)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RslRlModelCfg</span></code> no longer accepts <code class="docutils literal notranslate"><span class="pre">stochastic</span></code>, <code class="docutils literal notranslate"><span class="pre">init_noise_std</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">noise_std_type</span></code>. Use <code class="docutils literal notranslate"><span class="pre">distribution_cfg</span></code> instead
+(e.g. <code class="docutils literal notranslate"><span class="pre">{&quot;class_name&quot;:</span> <span class="pre">&quot;GaussianDistribution&quot;,</span> <span class="pre">&quot;init_std&quot;:</span> <span class="pre">1.0,</span>
+<span class="pre">&quot;std_type&quot;:</span> <span class="pre">&quot;scalar&quot;}</span></code>). Existing checkpoints are automatically
+migrated on load.</p></li>
 </ul>
 </div>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
 <ul class="simple">
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">&quot;step&quot;</span></code> event mode that fires every environment step.</p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">apply_body_impulse</span></code> event for applying transient external wrenches
+to bodies with configurable duration and optional application point offset.</p></li>
+<li><p>ONNX auto-export and metadata attachment for manipulation tasks (lift cube)
+on every checkpoint save, matching the velocity and tracking task behavior.</p></li>
 <li><p>Cloud training support via <a class="reference external" href="https://skypilot.readthedocs.io/">SkyPilot</a>
 and Lambda Cloud, with documentation covering setup, monitoring, and
 cost management.</p></li>
@@ -509,6 +521,9 @@ across a multi-GPU instance.</p></li>
 (<code class="docutils literal notranslate"><span class="pre">/update-mjwarp</span></code>, <code class="docutils literal notranslate"><span class="pre">/commit-push-pr</span></code>).</p></li>
 <li><p>Added optional <code class="docutils literal notranslate"><span class="pre">ViewerConfig.fovy</span></code> and apply it in native viewer camera
 setup when provided.</p></li>
+<li><p>Native viewer now tracks the first non-fixed body by default (matching
+the Viser viewer behavior introduced in
+<code class="docutils literal notranslate"><span class="pre">716aaaa58ad7bfaf34d2f771549d461204d1b4ba</span></code>).</p></li>
 <li><p>New <code class="docutils literal notranslate"><span class="pre">dr</span></code> module (<code class="docutils literal notranslate"><span class="pre">mjlab.envs.mdp.dr</span></code>) replacing <code class="docutils literal notranslate"><span class="pre">randomize_field</span></code>
 with typed per-field domain randomization functions. Each function
 automatically recomputes derived fields via <code class="docutils literal notranslate"><span class="pre">set_const</span></code>. Highlights:</p>
@@ -540,6 +555,9 @@ surfaces. Material names are now supported in <code class="docutils literal notr
 <li><p>Fixed <code class="docutils literal notranslate"><span class="pre">dr.body_com_offset</span></code> not triggering <code class="docutils literal notranslate"><span class="pre">set_const</span></code>.</p></li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export-scene</span></code> CLI script to export any task scene or asset_zoo entity
+(<code class="docutils literal notranslate"><span class="pre">g1</span></code>, <code class="docutils literal notranslate"><span class="pre">go1</span></code>, <code class="docutils literal notranslate"><span class="pre">yam</span></code>) to a directory or zip archive for inspection
+and debugging.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">yam_lift_cube_vision_env_cfg</span></code> now randomizes cube color (<code class="docutils literal notranslate"><span class="pre">dr.geom_rgba</span></code>)
 on every reset when <code class="docutils literal notranslate"><span class="pre">cam_type=&quot;rgb&quot;</span></code>.</p></li>
 <li><p>The native viewer now reflects per-world DR changes to visual model fields
@@ -583,11 +601,30 @@ deprecated in a future version.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">upload_model</span></code> option to <code class="docutils literal notranslate"><span class="pre">RslRlBaseRunnerCfg</span></code> to control W&amp;B model
 file uploads (<code class="docutils literal notranslate"><span class="pre">.pt</span></code> and <code class="docutils literal notranslate"><span class="pre">.onnx</span></code>) while keeping metric logging enabled
 (<a class="reference external" href="https://github.com/mujocolab/mjlab/pull/654">#654</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Scene.write(output_dir,</span> <span class="pre">zip=False)</span></code> exports the scene XML and mesh
+assets to a directory (or zip archive). Replaces <code class="docutils literal notranslate"><span class="pre">Scene.to_zip()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Entity.write_xml()</span></code> and <code class="docutils literal notranslate"><span class="pre">Scene.write()</span></code> now apply XML fixups
+(empty defaults, duplicate nested defaults) and strip buffer textures
+that <code class="docutils literal notranslate"><span class="pre">MjSpec.to_xml()</span></code> cannot serialize.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fix_spec_xml</span></code> and <code class="docutils literal notranslate"><span class="pre">strip_buffer_textures</span></code> utilities in
+<code class="docutils literal notranslate"><span class="pre">mjlab.utils.xml</span></code>.</p></li>
 </ul>
 </section>
 <section id="changed">
 <h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
 <ul class="simple">
+<li><p>Native viewer now syncs <code class="docutils literal notranslate"><span class="pre">xfrc_applied</span></code> to the render buffer and draws
+arrows for any nonzero applied forces. Mouse perturbation forces are
+converted to <code class="docutils literal notranslate"><span class="pre">qfrc_applied</span></code> (generalized joint space) so they coexist
+with programmatic forces on <code class="docutils literal notranslate"><span class="pre">xfrc_applied</span></code> without conflict.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ViewerConfig.OriginType.WORLD</span></code> now configures a free camera at the
+specified lookat point instead of auto tracking a body. A new <code class="docutils literal notranslate"><span class="pre">AUTO</span></code>
+origin type (now the default) preserves the previous auto tracking
+behavior.</p></li>
+<li><p>Upgraded <code class="docutils literal notranslate"><span class="pre">rsl-rl-lib</span></code> from 4.0.1 to 5.0.1. <code class="docutils literal notranslate"><span class="pre">RslRlModelCfg</span></code> now
+uses <code class="docutils literal notranslate"><span class="pre">distribution_cfg</span></code> dict instead of <code class="docutils literal notranslate"><span class="pre">stochastic</span></code> /
+<code class="docutils literal notranslate"><span class="pre">init_noise_std</span></code> / <code class="docutils literal notranslate"><span class="pre">noise_std_type</span></code>. Existing checkpoints are
+automatically migrated on load.</p></li>
 <li><p>Reorganized the Viser Controls tab into a cleaner folder hierarchy:
 Info, Simulation, Commands, Scene (with Environment, Camera, Debug Viz,
 Contacts sub-folders), and Camera Feeds. The Environment folder is
@@ -767,7 +804,7 @@ Contribution by <a class="reference external" href="https://github.com/oxkitsune
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upcoming-version-not-yet-released">Upcoming version (not yet released)</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#version-1-2-0-march-6-2026">Version 1.2.0 (March 6, 2026)</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
@@ -819,7 +856,7 @@ By The mjlab Developers
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Mar 02, 2026.
+  Last updated on Mar 07, 2026.
   <br/>
 </p>
   </div>
